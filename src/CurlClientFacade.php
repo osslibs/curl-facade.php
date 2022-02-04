@@ -2,14 +2,14 @@
 
 namespace osslibs\Curl;
 
-class CurlFacade
+class CurlClientFacade extends AbstractCurlClient
 {
     /**
-     * @var CurlHandler
+     * @var CurlClient
      */
     private $curl;
 
-    public function __construct(Curl $curl = null)
+    public function __construct(CurlClient $curl = null)
     {
         $this->curl = $curl ?? new Curl();
     }

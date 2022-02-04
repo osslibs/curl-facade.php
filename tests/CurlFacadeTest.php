@@ -37,7 +37,7 @@ class CurlFacadeTest extends TestCase
         $curl->shouldReceive('errno')->once()->andReturn(0);
         $curl->shouldReceive('close')->once();
 
-        $facade = new CurlFacade($curl);
+        $facade = new CurlClientFacade($curl);
         $facade->method($method);
         $facade->uri($uri);
         $facade->headersStringList($headers);
