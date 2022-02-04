@@ -1,0 +1,21 @@
+{
+    "name": "osslibs/curl-facade",
+    "type": "library",
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "authors": [
+        {
+            "name": "Terrence Howard",
+            "email": "chemisus@gmail.com"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^5.5",
+        "mockery/mockery": "^1.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "osslibs\\Curl\\": "src/"
+        }
+    }
+}
