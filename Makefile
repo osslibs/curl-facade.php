@@ -1,6 +1,7 @@
 PHP=php
 PHPUNIT=vendor/bin/phpunit
 COMPOSER_PHAR=composer.phar
+VENDOR=vendor
 
 .PHONY: test
 test: $(PHPUNIT)
