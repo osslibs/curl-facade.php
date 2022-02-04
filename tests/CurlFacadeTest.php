@@ -34,6 +34,7 @@ class CurlFacadeTest extends TestCase
         $curl->shouldReceive('setopt')->once()->withSomeOfArgs(CURLOPT_HEADERFUNCTION);
         $curl->shouldReceive('getinfo')->once()->with(CURLINFO_RESPONSE_CODE)->andReturn($status);
         $curl->shouldReceive('exec')->once()->andReturn($expect);
+        $curl->shouldReceive('errno')->once()->andReturn(0);
         $curl->shouldReceive('close')->once();
 
         $facade = new CurlFacade($curl);

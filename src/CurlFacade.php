@@ -81,9 +81,10 @@ class CurlFacade
 
         $data = $this->curl->exec();
         $status = (int)$this->curl->getinfo(CURLINFO_RESPONSE_CODE);
+        $error = $this->curl->errno();
 
-        if ($status === 0 || $data === false) {
-            throw new CurlException($this->curl->error());
+        if ($error !== 0) {
+            throw new CurlException($curl->error(), $error);
         }
 
         $this->curl->close();
