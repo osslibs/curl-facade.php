@@ -2,8 +2,13 @@ PHP=php
 PHPUNIT=vendor/bin/phpunit
 COMPOSER_PHAR=composer.phar
 
+.PHONY: test
 test: $(PHPUNIT)
 	$(PHPUNIT) tests
+
+.PHONY: clean
+clean:
+	rm --preserve-root -rf ./$(COMPOSER_PHAR) ./$(VENDOR)
 
 $(COMPOSER_PHAR):
 	$(PHP) -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
