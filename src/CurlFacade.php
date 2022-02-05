@@ -4,25 +4,20 @@ namespace osslibs\Curl;
 
 class CurlFacade extends AbstractCurl
 {
-    /**
-     * @var CurlClient
-     */
-    private $curl;
-
     public function __construct(Curl $curl = null)
     {
-        $this->curl = $curl ?? new CurlHandler();
+        parent::__construct($curl ?? new CurlHandler());
     }
 
     public function method(string $method): self
     {
-        $this->curl->setopt(CURLOPT_CUSTOMREQUEST, $method);
+        $this->setopt(CURLOPT_CUSTOMREQUEST, $method);
         return $this;
     }
 
     public function uri(string $uri): self
     {
-        $this->curl->setopt(CURLOPT_URL, $uri);
+        $this->setopt(CURLOPT_URL, $uri);
         return $this;
     }
 
@@ -43,32 +38,26 @@ class CurlFacade extends AbstractCurl
 
     public function headersStringList(?array $headers)
     {
-        $headers && $this->curl->setopt(CURLOPT_HTTPHEADER, $headers);
+        $headers && $this->setopt(CURLOPT_HTTPHEADER, $headers);
         return $this;
     }
 
     public function data(?string $data = null)
     {
-        $data && $this->curl->setopt(CURLOPT_POSTFIELDS, $data);
+        $data && $this->setopt(CURLOPT_POSTFIELDS, $data);
         return $this;
     }
 
     public function timeout(?int $milliseconds = null)
     {
-        $milliseconds && $this->curl->setopt(CURLOPT_TIMEOUT_MS, $milliseconds);
+        $this->setopt(CURLOPT_TIMEOUT_MS, $milliseconds);
         return $this;
     }
 
-    /**
-     * @return CurlResponse
-     * @throws CurlException
-     */
-    public function execute(): CurlResponse
+    public function execute(int &$status=null, array &$headers = [], &$errno=null, &$error=null): string
     {
-        $headers = [];
-
-        $this->curl->setopt(CURLOPT_RETURNTRANSFER, 1);
-        $this->curl->setopt(CURLOPT_HEADERFUNCTION, function ($curl, $header) use (&$headers) {
+        $this->setopt(CURLOPT_RETURNTRANSFER, 1);
+        $this->setopt(CURLOPT_HEADERFUNCTION, function ($curl, $header) use (&$headers) {
             $length = strlen($header);
             $header = explode(':', $header, 2);
             if (count($header) == 2) {
@@ -79,16 +68,13 @@ class CurlFacade extends AbstractCurl
             return $length;
         });
 
-        $data = $this->curl->exec();
-        $status = (int)$this->curl->getinfo(CURLINFO_RESPONSE_CODE);
-        $error = $this->curl->errno();
+        $data = $this->exec();
+        $status = (int)$this->getinfo(CURLINFO_RESPONSE_CODE);
+        $errno = $this->errno();
+        $error = $this->error();
 
-        if ($error !== 0) {
-            throw new CurlException($curl->error(), $error);
-        }
+        $this->close();
 
-        $this->curl->close();
-
-        return new CurlResponse($status, $headers, $data);
+        return $data;
     }
 }
