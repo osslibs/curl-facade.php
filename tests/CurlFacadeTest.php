@@ -80,9 +80,21 @@ class CurlFacadeTest extends TestCase
 
     public function testExecute()
     {
-//        $curl = Mockery::mock(Curl::class);
-//        $curl->shouldReceive('exec')->once();
-//        $facade = new CurlFacade($curl);
-//        $facade->execute();
+        $expect = "alkdsfjldf";
+        $curl = Mockery::mock(Curl::class);
+        $curl->shouldReceive('setopt')->once()->with(CURLOPT_RETURNTRANSFER, 1);
+        $curl->shouldReceive('setopt')->once()->withSomeOfArgs(CURLOPT_HEADERFUNCTION);
+        $curl->shouldReceive('getinfo')->once()->with(CURLINFO_RESPONSE_CODE)->andReturn(123);
+        $curl->shouldReceive('errno')->once()->with()->andReturn(456);
+        $curl->shouldReceive('error')->once()->with()->andReturn("foobar");
+        $curl->shouldReceive('exec')->once()->andReturn($expect);
+        $curl->shouldReceive('close')->once();
+        $facade = new CurlFacade($curl);
+        $headers = [];
+        $actual = $facade->execute($status, $headers, $errno, $error);
+        $this->assertSame(123, $status);
+        $this->assertSame(456, $errno);
+        $this->assertSame("foobar", $error);
+        $this->assertSame($expect, $actual);
     }
 }
